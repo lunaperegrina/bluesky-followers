@@ -9,7 +9,6 @@ import { useUserContext } from "@/context/userContext"
 export default async function Component() {
 
   const { user } = useUserContext()
-  
   return (
     <div className="w-full max-w-md mx-auto bg-background rounded-lg shadow-lg overflow-hidden mt-40">
       <pre>
