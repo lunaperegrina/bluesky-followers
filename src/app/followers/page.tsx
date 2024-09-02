@@ -27,24 +27,12 @@ export default function Component() {
 				await getFollows(session.did, session.token);
 			});
 		}
+		return;
 	}, [session]);
 
 	return (
 		<div className="w-full max-w-md mx-auto bg-background rounded-lg shadow-lg overflow-hidden mt-40">
-			<pre>
-				{/* {JSON.stringify(getKnownFollowers.lenght, null, 2)}
-        {JSON.stringify(followers.length, null, 2)} */}
-				{/* {JSON.stringify(follows.length, null, 2)} */}
-				{/* {knownFollowers.length} */}
-				{/* {JSON.stringify(session, null, 2)} */}
-				{/* {JSON.stringify(follows, null, 2)} */}
-			</pre>
-			{/* <div className="bg-primary py-6 px-8">
-        <h1 className="text-3xl font-bold text-primary-foreground">Your Profile</h1>
-      </div> */}
 			<div className="p-8 space-y-6">
-				{/* <img src={user?.banner} className="w-full rounded-lg mb-4" alt="banner" /> */}
-
 				<div className="flex items-center gap-4">
 					<Avatar className="h-16 w-16">
 						<AvatarImage src={user?.avatar} alt="@shadcn" />
@@ -81,11 +69,14 @@ export default function Component() {
 				</div>
 				<div className="bg-muted rounded-lg p-4">
 					<h2 className="text-lg font-semibold mb-2">Don't follow you</h2>
-					<ul className="space-y-2">
+					<ul className="space-y-6 md:space-y-2">
 						{follows
 							?.filter((follow) => !follow?.viewer?.followedBy)
 							.map((follow) => (
-								<div key={follow?.did} className="flex justify-between gap-4">
+								<div
+									className="flex flex-col justify-between overflow-hidden gap-4 md:flex-row"
+									key={follow?.handle}
+								>
 									<div className="flex items-center gap-4">
 										<Avatar className="h-10 w-10">
 											<AvatarImage src={follow?.avatar} alt="@shadcn" />
