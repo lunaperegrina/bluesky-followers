@@ -1,5 +1,3 @@
-"use client"
-
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
@@ -19,19 +17,16 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { PasswordInput } from "@/components/password-input"
-import { AxiosError } from "axios"
-export default function Component() {
-  const [loading, setLoading] = useState(false);
-  const [showLoginError, setShowLoginError] = useState(false);
+   FormMessage,
+ } from "@/components/ui/form";
+ import { PasswordInput } from "@/components/password-input"
+ import { AxiosError } from "axios"
+ export default function Component() {
+   const [loading, setLoading] = useState(false);
+   const [showLoginError, setShowLoginError] = useState(false);
   const { createSession, getProfile } = useUserContext();
-
   const router = useRouter();
-
   const { toast } = useToast();
-
   const formSchema = z.object({
     identifier: z.string().min(2, {
       message: "Por favor, insira um identificador com mais de 2 caracteres.",
@@ -40,7 +35,6 @@ export default function Component() {
       message: "Por favor, insira uma senha com mais de 2 caracteres.",
     }),
   });
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -48,7 +42,6 @@ export default function Component() {
       password: "",
     },
   });
-
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
     try {
@@ -61,22 +54,21 @@ export default function Component() {
         title: `Login realizado com sucesso! 💖`,
       });
 
-      router.push("/followers");
-    } catch (error) {
-      if(error instanceof AxiosError) {
-        if(error.response?.data.message === "Invalid identifier or password") {
-          toast({
-            title: `Username ou senha incorretos 😕`,
-          });
-        }
-      }
-      console.error(error);
-      setLoading(false);
-    } finally {
+       router.push("/followers");
+     } catch (error) {
+       if(error instanceof AxiosError) {
+         if(error.response?.data.message === "Invalid identifier or password") {
+           toast({
+             title: `Username ou senha incorretos 😕`,
+           });
+         }
+       }
+       console.error(error);
+       setLoading(false);
+     } finally {
       setLoading(false);
     }
   }
-
   return (
     <div className="flex items-center justify-center min-h-screen">
       <Card className="w-full max-w-md">
@@ -85,10 +77,7 @@ export default function Component() {
           {/* <CardDescription>Entre com seu nome de usuário e senha para acessar sua conta.</CardDescription> */}
         </CardHeader>
         <CardContent className="space-y-4">
-
-
           <Form {...form}>
-
             <form
               onSubmit={form.handleSubmit(onSubmit)}
               className="grid gap-4"
@@ -125,19 +114,15 @@ export default function Component() {
                   </FormItem>
                 )}
               />
-
               <Button className="w-full bg-primary">Entrar</Button>
-
             </form>
           </Form>
-
           {showLoginError && (
             <Alert variant="destructive">
               <AlertTriangle className="h-4 w-4" />
               <p>Username ou senha inválidos.</p>
             </Alert>
           )}
-
           <Alert variant="default">
             <AlertTriangle className="h-4 w-4" />
             <p>Autenticação de dois fatores (2FA) ainda não é suportada.</p>
