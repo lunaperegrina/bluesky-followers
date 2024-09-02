@@ -41,7 +41,7 @@ export const useUserContext = create(
     (set) => ({
       session: {} as Session,
       user: {},
-      follows: {},
+      follows: [],
       knownFollowers: {},
       followers: {},
       createSession: async (credentials: Credentials) => {

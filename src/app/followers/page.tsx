@@ -29,9 +29,7 @@ export default function Component() {
     if (session.did) {
       fetchData(async () => {
         await getProfile(session.did, session.token);
-        // await getFollowers(session.did, session.token);
         await getFollows(session.did, session.token);
-        // await getKnownFollowers(session.did, session.token);
       });
     }
   }, [session]);
@@ -78,14 +76,14 @@ export default function Component() {
             <div className="text-muted-foreground">Mutuals</div>
           </div>
           <div>
-            <div className="text-2xl font-bold">{follows.filter((follow: { viewer: { followedBy: any } }) => !follow.viewer?.followedBy).length}</div>
+            <div className="text-2xl font-bold">{follows && follows?.filter((follow: { viewer: { followedBy: any } }) => !follow.viewer?.followedBy).length}</div>
             <div className="text-muted-foreground">Don't follow you</div>
           </div>
         </div>
         <div className="bg-muted rounded-lg p-4">
           <h2 className="text-lg font-semibold mb-2">Don't follow you</h2>
           <ul className="space-y-2">
-            {follows.filter((follow: { viewer: { followedBy: any } }) => !follow.viewer?.followedBy).map((follow: any) => (
+            {follows && follows?.filter((follow: { viewer: { followedBy: any } }) => !follow?.viewer?.followedBy).map((follow: any) => (
               <div className="flex justify-between gap-4">
                 <div className="flex items-center gap-4">
                   <Avatar className="h-10 w-10">
