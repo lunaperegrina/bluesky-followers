@@ -21,6 +21,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { PasswordInput } from "@/components/password-input"
 export default function Component() {
   const [loading, setLoading] = useState(false);
   const [showLoginError, setShowLoginError] = useState(false);
@@ -110,7 +111,7 @@ export default function Component() {
                       {/* <span className="text-red-500">*</span> */}
                     </FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Your password" />
+                      <PasswordInput {...field} placeholder="Your password" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
