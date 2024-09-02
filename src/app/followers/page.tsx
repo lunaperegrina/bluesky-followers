@@ -27,6 +27,7 @@ export default function Component() {
         await getProfile(session.did, session.token);
         await getFollows(session.did, session.token);
       });
+      return;
     }
 
     redirect('/login')
@@ -80,9 +81,9 @@ export default function Component() {
         </div>
         <div className="bg-muted rounded-lg p-4">
           <h2 className="text-lg font-semibold mb-2">Don't follow you</h2>
-          <ul className="space-y-2">
+          <ul className="space-y-6 md:space-y-2">
             {follows && follows?.filter((follow: { viewer: { followedBy: any } }) => !follow?.viewer?.followedBy).map((follow: any) => (
-              <div className="flex justify-between gap-4">
+              <div className="flex flex-col justify-between overflow-hidden gap-4 md:flex-row" key={follow?.handle}>
                 <div className="flex items-center gap-4">
                   <Avatar className="h-10 w-10">
                     <AvatarImage src={follow?.avatar} alt="@shadcn" />
