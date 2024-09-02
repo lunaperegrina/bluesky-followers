@@ -22,6 +22,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { PasswordInput } from "@/components/password-input"
+import { AxiosError } from "axios"
 export default function Component() {
   const [loading, setLoading] = useState(false);
   const [showLoginError, setShowLoginError] = useState(false);
@@ -62,6 +63,13 @@ export default function Component() {
 
       router.push("/followers");
     } catch (error) {
+      if(error instanceof AxiosError) {
+        if(error.response?.data.message === "Invalid identifier or password") {
+          toast({
+            title: `Username ou senha incorretos 😕`,
+          });
+        }
+      }
       console.error(error);
       setLoading(false);
     } finally {
