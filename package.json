@@ -7,6 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "biome:check": "biome check ./src",
+    "biome:check-write": "biome check --write ./src",
     "prepare": "husky"
   },
   "dependencies": {
@@ -31,6 +33,7 @@
     "zustand": "^4.5.5"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.8.3",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
