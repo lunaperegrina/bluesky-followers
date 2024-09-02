@@ -13,10 +13,6 @@ export default function Component() {
 
   const { user, session, getProfile, followers, follows, getFollows } = useUserContext()
 
-  if (!session) {
-    redirect('/login')
-  }
-
   async function fetchData(callback: any) {
     try {
       await callback();
@@ -32,6 +28,8 @@ export default function Component() {
         await getFollows(session.did, session.token);
       });
     }
+
+    redirect('/login')
   }, [session]);
 
   return (
