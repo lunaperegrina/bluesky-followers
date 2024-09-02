@@ -24,7 +24,7 @@ import {
 export default function Component() {
   const [loading, setLoading] = useState(false);
   const [showLoginError, setShowLoginError] = useState(false);
-  const { createSession } = useUserContext();
+  const { createSession, getProfile } = useUserContext();
 
   const router = useRouter();
 
@@ -50,12 +50,11 @@ export default function Component() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
     try {
-      await createSession(
-        {
-          identifier: values.identifier,
-          password: values.password,
-        }
-      );
+      const { did, token } = await createSession({
+        identifier: values.identifier,
+        password: values.password,
+      });
+      
       toast({
         title: `Login realizado com sucesso! 💖`,
       });
@@ -83,7 +82,7 @@ export default function Component() {
 
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-            className="grid gap-4"
+              className="grid gap-4"
             >
               <FormField
                 control={form.control}
@@ -101,7 +100,7 @@ export default function Component() {
                   </FormItem>
                 )}
               />
-                <FormField
+              <FormField
                 control={form.control}
                 name="password"
                 render={({ field }) => (

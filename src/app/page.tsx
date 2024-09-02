@@ -1,20 +1,14 @@
-'use client'
-
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Plus } from 'lucide-react'
 import { AtpAgent } from '@atproto/api'
-import { useUserContext } from "@/context/userContext"
+import { redirect } from "next/navigation"
+export default function Component() {
 
-export default async function Component() {
-
-  const { user } = useUserContext()
+  redirect("/followers")
   
   return (
     <div className="w-full max-w-md mx-auto bg-background rounded-lg shadow-lg overflow-hidden mt-40">
-      <pre>
-        {JSON.stringify(user, null, 2)}
-      </pre>
       <div className="bg-primary py-6 px-8">
         <h1 className="text-3xl font-bold text-primary-foreground">Seu Perfil</h1>
       </div>
