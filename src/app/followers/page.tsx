@@ -11,6 +11,13 @@ import { useEffect } from "react";
 
 export default function Component() {
 	const { user, session, getProfile, follows, getFollows } = useUserContext();
+	const { token, did } = useUserContext.getState().session;
+
+	useEffect(() => {
+		if (!token || !did) {
+			redirect("/login");
+		}
+	}, []);
 
 	async function fetchData(callback: () => Promise<void>) {
 		try {
