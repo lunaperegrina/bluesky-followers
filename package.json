@@ -9,6 +9,7 @@
     "lint": "next lint",
     "biome:check": "biome check ./src",
     "biome:check-write": "biome check --write ./src",
+    "biome:fix-unsafe": "biome check --fix --unsafe ./src",
     "prepare": "husky"
   },
   "dependencies": {
