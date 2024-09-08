@@ -3,50 +3,41 @@
 import { PasswordInput } from "@/components/password-input";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardFooter,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
-import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from "@/components/ui/form";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useUserContext } from "@/context/user-context";
+import { UsernameInput } from "@/components/username-input";
 import { useToast } from "@/hooks/use-toast";
+import { bskyAgent } from "@/services/bsky-agent";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AxiosError } from "axios";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, Lightbulb } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-export default function Component() {
-	const { signIn } = useUserContext();
-	const { toast } = useToast();
 
+export default function Login() {
+	const { toast } = useToast();
 	const router = useRouter();
 
-	const { session } = useUserContext();
 	useEffect(() => {
-		if (
-			session?.access_jwt &&
-			session.refresh_jwt &&
-			session.did &&
-			session.handle
-		) {
+		async function resume() {
+			const session = sessionStorage.getItem("session");
+
+			if (session) {
+				const savedSessionData = JSON.parse(session);
+				await bskyAgent.resumeSession(savedSessionData);
+			}
+		}
+
+		resume();
+	}, []);
+
+	useEffect(() => {
+		if (bskyAgent.hasSession) {
 			router.push("/followers");
 		}
-	}, [session]);
+	}, [bskyAgent]);
 
 	const formSchema = z.object({
 		identifier: z.string().min(3, {
@@ -67,7 +58,7 @@ export default function Component() {
 
 	async function onSubmit(values: z.infer<typeof formSchema>) {
 		try {
-			await signIn({
+			await bskyAgent.login({
 				identifier: values.identifier,
 				password: values.password,
 			});
@@ -75,15 +66,16 @@ export default function Component() {
 			toast({
 				title: "Login realizado com sucesso! 💖",
 			});
+
+			router.push("/followers");
 		} catch (error) {
-			if (error instanceof AxiosError) {
-				if (error.response?.data.message === "Invalid identifier or password") {
-					toast({
-						title: "Username ou senha incorretos 😕",
-					});
-				}
-			}
 			console.error(error);
+			if ((error as { message: string }).message.includes("Invalid identifier or password")) {
+				toast({
+					title: "Username ou senha incorretos 😕",
+				});
+				return;
+			}
 		}
 	}
 
@@ -91,7 +83,7 @@ export default function Component() {
 		<div className="flex items-center justify-center min-h-screen">
 			<Card className="w-full max-w-md">
 				<CardHeader>
-					<CardTitle className="text-2xl">Followers on BlueSky</CardTitle>
+					<CardTitle className="text-2xl">Bluesky Followers</CardTitle>
 					{/* <CardDescription>Entre com seu nome de usuário e senha para acessar sua conta.</CardDescription> */}
 				</CardHeader>
 				<CardContent className="space-y-4">
@@ -107,7 +99,7 @@ export default function Component() {
 											{/* <span className="text-red-500">*</span> */}
 										</FormLabel>
 										<FormControl>
-											<Input {...field} placeholder="Your username" />
+											<UsernameInput {...field} placeholder="Username" />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -119,11 +111,11 @@ export default function Component() {
 								render={({ field }) => (
 									<FormItem className="space-y-2">
 										<FormLabel>
-											Password
+											Senha
 											{/* <span className="text-red-500">*</span> */}
 										</FormLabel>
 										<FormControl>
-											<PasswordInput {...field} placeholder="Your password" />
+											<PasswordInput {...field} placeholder="Senha" />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -132,6 +124,16 @@ export default function Component() {
 							<Button className="w-full bg-primary">Entrar</Button>
 						</form>
 					</Form>
+					<Alert variant="default">
+						<Lightbulb className="h-4 w-4" />
+						<p>
+							Utilize o App Passwords para maior segurança, vá em{" "}
+							<a href="https://bsky.app/settings" className="underline text-primary" target="_blank" rel="noreferrer">
+								Configurações
+							</a>{" "}
+							&gt; App Passwords e gere sua senha!
+						</p>
+					</Alert>
 					<Alert variant="default">
 						<AlertTriangle className="h-4 w-4" />
 						<p>Autenticação de dois fatores (2FA) ainda não é suportada.</p>
