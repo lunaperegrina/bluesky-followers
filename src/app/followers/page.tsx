@@ -68,7 +68,7 @@ export default function Component() {
 		try {
 			const { data } = await bskyAgent.getFollows({
 				actor: did,
-				limit: 20,
+				limit: 50,
 				cursor: cursor,
 			});
 
@@ -158,9 +158,13 @@ export default function Component() {
 						<ul className="space-y-6">
 							{follows
 								?.filter((follow) => !follow?.viewer?.followedBy)
-								.map((follow) => (
+								.map((follow, index) => (
 									<li
-										className="flex flex-col justify-between overflow-hidden gap-4 sm:flex-row border-b pb-4 items-start"
+										className={`flex flex-col justify-between overflow-hidden gap-4 sm:flex-row items-start ${
+											index !== follows?.filter((follow) => !follow?.viewer?.followedBy).length - 1
+												? "border-b pb-4"
+												: ""
+										}`}
 										key={follow?.did}
 									>
 										<div className="flex items-center gap-4">
