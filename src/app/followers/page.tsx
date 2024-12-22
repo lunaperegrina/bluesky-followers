@@ -8,11 +8,12 @@ import { useToast } from "@/hooks/use-toast";
 import { bskyAgent } from "@/services/bsky-agent";
 import type { ProfileView, ProfileViewDetailed } from "@atproto/api/dist/client/types/app/bsky/actor/defs";
 import { LogOut, UserRoundMinus } from "lucide-react";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function Component() {
 	const [user, setUser] = useState<ProfileViewDetailed>();
+	const router = useRouter();
 
 	const [follows, setFollows] = useState<ProfileView[]>([]);
 	const [cursor, setCursor] = useState<string>();
@@ -90,12 +91,14 @@ export default function Component() {
 	}
 
 	async function logOut() {
-		// try {
-		// 	// await bskyAgent.logout();
-		// 	// sessionStorage.removeItem("session");
-		// } catch (error) {
-		// 	console.error(error);
-		// }
+		try {
+			await bskyAgent.logout();
+			sessionStorage.removeItem("session");
+		} catch (error) {
+			console.error(error);
+		} finally {
+			location.reload();
+		}
 	}
 
 	async function unfollow(user: ProfileView) {
@@ -130,7 +133,9 @@ export default function Component() {
 
 	return (
 		<>
-			<div className="flex justify-end p-4">{/* <LogOut onClick={logOut} className="cursor-pointer" /> */}</div>
+			<div className="flex justify-end p-4">
+				<LogOut onClick={logOut} className="cursor-pointer" />
+			</div>
 			<div className="w-full container mx-auto bg-background rounded-lg shadow-lg overflow-hidden mt-6">
 				<div className="p-8 space-y-6">
 					<div className="flex items-center gap-4">

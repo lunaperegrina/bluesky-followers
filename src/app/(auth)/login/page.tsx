@@ -80,11 +80,10 @@ export default function Login() {
 	}
 
 	return (
-		<div className="flex items-center justify-center min-h-screen">
+		<div className="flex items-center justify-center min-h-screen mx-4">
 			<Card className="w-full max-w-md">
 				<CardHeader>
 					<CardTitle className="text-2xl">Bluesky Followers</CardTitle>
-					{/* <CardDescription>Entre com seu nome de usuário e senha para acessar sua conta.</CardDescription> */}
 				</CardHeader>
 				<CardContent className="space-y-4">
 					<Form {...form}>
@@ -94,12 +93,9 @@ export default function Login() {
 								name="identifier"
 								render={({ field }) => (
 									<FormItem className="space-y-2">
-										<FormLabel>
-											Username
-											{/* <span className="text-red-500">*</span> */}
-										</FormLabel>
+										<FormLabel>username</FormLabel>
 										<FormControl>
-											<UsernameInput {...field} placeholder="Username" />
+											<UsernameInput {...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -110,34 +106,31 @@ export default function Login() {
 								name="password"
 								render={({ field }) => (
 									<FormItem className="space-y-2">
-										<FormLabel>
-											Senha
-											{/* <span className="text-red-500">*</span> */}
-										</FormLabel>
+										<FormLabel>password</FormLabel>
 										<FormControl>
-											<PasswordInput {...field} placeholder="Senha" />
+											<PasswordInput {...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
 								)}
 							/>
-							<Button className="w-full bg-primary">Entrar</Button>
+							<Button className="w-full bg-blue-500">Login</Button>
 						</form>
 					</Form>
 					<Alert variant="default">
 						<Lightbulb className="h-4 w-4" />
 						<p>
-							Utilize o App Passwords para maior segurança, vá em{" "}
+							Use App Passwords for greater security! Go to{" "}
 							<a href="https://bsky.app/settings" className="underline text-primary" target="_blank" rel="noreferrer">
-								Configurações
+								Settings
 							</a>{" "}
-							&gt; App Passwords e gere sua senha!
+							&gt; App Passwords and generate your password!
 						</p>
 					</Alert>
-					<Alert variant="default">
+					{/* <Alert variant="default">
 						<AlertTriangle className="h-4 w-4" />
 						<p>Autenticação de dois fatores (2FA) ainda não é suportada.</p>
-					</Alert>
+					</Alert> */}
 				</CardContent>
 			</Card>
 		</div>
