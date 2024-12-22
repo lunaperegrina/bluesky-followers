@@ -101,7 +101,7 @@ export default function Component() {
 	async function unfollow(user: ProfileView) {
 		if (!user.viewer?.following) {
 			toast({
-				title: `Erro ao dar unfollow no usuário ${user.displayName} 😕`,
+				title: `Error unfollowing user ${user.displayName} 😕`,
 			});
 			return;
 		}
@@ -113,8 +113,16 @@ export default function Component() {
 			setFollows(newFollows);
 
 			toast({
-				title: `Usuário ${user.displayName} deixou de ser seguido! 💖`,
+				title: `User ${user.displayName} unfollowed!`,
 			});
+
+			if (!bskyAgent.session) {
+				redirect("/login");
+			}
+
+			if (bskyAgent.hasSession) {
+				getProfile(bskyAgent.session.did);
+			}
 		} catch (error) {
 			console.error(error);
 		}
@@ -123,7 +131,7 @@ export default function Component() {
 	return (
 		<>
 			<div className="flex justify-end p-4">{/* <LogOut onClick={logOut} className="cursor-pointer" /> */}</div>
-			<div className="w-full max-w-md mx-auto bg-background rounded-lg shadow-lg overflow-hidden mt-12">
+			<div className="w-full container mx-auto bg-background rounded-lg shadow-lg overflow-hidden mt-6">
 				<div className="p-8 space-y-6">
 					<div className="flex items-center gap-4">
 						<Avatar className="h-16 w-16">
@@ -138,15 +146,15 @@ export default function Component() {
 					<div className="grid grid-cols-2 gap-4 text-center">
 						<div>
 							<div className="text-2xl font-bold">{user?.followersCount}</div>
-							<div className="text-muted-foreground">Seguidores</div>
+							<div className="text-muted-foreground">Followers</div>
 						</div>
 						<div>
 							<div className="text-2xl font-bold">{user?.followsCount}</div>
-							<div className="text-muted-foreground">Seguindo</div>
+							<div className="text-muted-foreground">Following</div>
 						</div>
 					</div>
 					<div className="bg-muted rounded-lg p-4">
-						<h2 className="text-lg font-semibold mb-4">Não te seguem</h2>
+						<h2 className="text-lg font-semibold mb-4">Don't follow you</h2>
 						<ul className="space-y-6">
 							{follows
 								?.filter((follow) => !follow?.viewer?.followedBy)
