@@ -9,6 +9,7 @@ import type { ProfileView, ProfileViewDetailed } from "@atproto/api/dist/client/
 import { LogOut, UserRoundMinus } from "lucide-react";
 import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Separator } from "@/components/ui/separator"
 
 export default function Component() {
 	const [user, setUser] = useState<ProfileViewDetailed>();
@@ -16,6 +17,7 @@ export default function Component() {
 	const [follows, setFollows] = useState<ProfileView[]>([]);
 	const [cursor, setCursor] = useState<string>();
 	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [allFollowsCatched, setAllFollowsCatched] = useState<boolean>(false);
 
 	const { toast } = useToast();
 
@@ -33,7 +35,7 @@ export default function Component() {
 	const handleScroll = () => {
 		if (
 			window.innerHeight + document.documentElement.scrollTop !== document.documentElement.offsetHeight ||
-			isLoading
+			isLoading || allFollowsCatched
 		) {
 			return;
 		}
@@ -68,6 +70,14 @@ export default function Component() {
 				limit: 20,
 				cursor: cursor,
 			});
+
+			console.log(data);
+
+			if (data.cursor === null || data.cursor === undefined) {
+				setIsLoading(false);
+				setAllFollowsCatched(true);
+				return;
+			}
 
 			setCursor(data.cursor);
 			setFollows([...follows, ...data.follows]);
@@ -111,7 +121,9 @@ export default function Component() {
 
 	return (
 		<>
-			<div className="flex justify-end p-4">{/* <LogOut onClick={logOut} className="cursor-pointer" /> */}</div>
+			<div className="flex justify-end p-4">
+				{/* <LogOut onClick={logOut} className="cursor-pointer" /> */}
+			</div>
 			<div className="w-full max-w-md mx-auto bg-background rounded-lg shadow-lg overflow-hidden mt-12">
 				<div className="p-8 space-y-6">
 					<div className="flex items-center gap-4">
@@ -133,26 +145,14 @@ export default function Component() {
 							<div className="text-2xl font-bold">{user?.followsCount}</div>
 							<div className="text-muted-foreground">Seguindo</div>
 						</div>
-						{/* <div>
-              <div className="text-2xl font-bold">
-                {user?.viewer?.knownFollowers?.count}
-              </div>
-              <div className="text-muted-foreground">Mutuals</div>
-            </div>
-            <div>
-              <div className="text-2xl font-bold">
-                {follows?.filter((follow) => !follow.viewer?.followedBy).length}
-              </div>
-              <div className="text-muted-foreground">Não te seguem</div>
-            </div> */}
 					</div>
 					<div className="bg-muted rounded-lg p-4">
-						<h2 className="text-lg font-semibold mb-2">Não te seguem</h2>
-						<ul className="space-y-6 md:space-y-2">
+						<h2 className="text-lg font-semibold mb-4">Não te seguem</h2>
+						<ul className="space-y-6">
 							{follows
 								?.filter((follow) => !follow?.viewer?.followedBy)
 								.map((follow) => (
-									<li className="flex flex-col justify-between overflow-hidden gap-4 md:flex-row" key={follow?.did}>
+									<li className="flex flex-col justify-between overflow-hidden gap-4 sm:flex-row border-b pb-4 items-start" key={follow?.did}>
 										<div className="flex items-center gap-4">
 											<Avatar className="h-10 w-10">
 												<AvatarImage src={follow?.avatar} alt="@shadcn" />
@@ -160,10 +160,12 @@ export default function Component() {
 											</Avatar>
 											<div className="space-y-1">
 												<div className="text-md font-semibold">{follow?.displayName}</div>
-												<div className="text-muted-foreground">@{follow?.handle}</div>
+												<div className="text-muted-foreground text-sm">@{follow?.handle}</div>
 											</div>
 										</div>
-										<Button variant="destructive" size="sm" onClick={() => unfollow(follow)}>
+										<Button variant="destructive" className="w-full sm:w-12" onClick={
+											() => unfollow(follow)
+										}>
 											<UserRoundMinus size={16} />
 										</Button>
 									</li>
