@@ -3,13 +3,13 @@
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { bskyAgent } from "@/services/bsky-agent";
 import type { ProfileView, ProfileViewDetailed } from "@atproto/api/dist/client/types/app/bsky/actor/defs";
 import { LogOut, UserRoundMinus } from "lucide-react";
 import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Separator } from "@/components/ui/separator"
 
 export default function Component() {
 	const [user, setUser] = useState<ProfileViewDetailed>();
@@ -35,7 +35,8 @@ export default function Component() {
 	const handleScroll = () => {
 		if (
 			window.innerHeight + document.documentElement.scrollTop !== document.documentElement.offsetHeight ||
-			isLoading || allFollowsCatched
+			isLoading ||
+			allFollowsCatched
 		) {
 			return;
 		}
@@ -121,9 +122,7 @@ export default function Component() {
 
 	return (
 		<>
-			<div className="flex justify-end p-4">
-				{/* <LogOut onClick={logOut} className="cursor-pointer" /> */}
-			</div>
+			<div className="flex justify-end p-4">{/* <LogOut onClick={logOut} className="cursor-pointer" /> */}</div>
 			<div className="w-full max-w-md mx-auto bg-background rounded-lg shadow-lg overflow-hidden mt-12">
 				<div className="p-8 space-y-6">
 					<div className="flex items-center gap-4">
@@ -152,7 +151,10 @@ export default function Component() {
 							{follows
 								?.filter((follow) => !follow?.viewer?.followedBy)
 								.map((follow) => (
-									<li className="flex flex-col justify-between overflow-hidden gap-4 sm:flex-row border-b pb-4 items-start" key={follow?.did}>
+									<li
+										className="flex flex-col justify-between overflow-hidden gap-4 sm:flex-row border-b pb-4 items-start"
+										key={follow?.did}
+									>
 										<div className="flex items-center gap-4">
 											<Avatar className="h-10 w-10">
 												<AvatarImage src={follow?.avatar} alt="@shadcn" />
@@ -163,9 +165,7 @@ export default function Component() {
 												<div className="text-muted-foreground text-sm">@{follow?.handle}</div>
 											</div>
 										</div>
-										<Button variant="destructive" className="w-full sm:w-12" onClick={
-											() => unfollow(follow)
-										}>
+										<Button variant="destructive" className="w-full sm:w-12" onClick={() => unfollow(follow)}>
 											<UserRoundMinus size={16} />
 										</Button>
 									</li>
