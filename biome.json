@@ -9,6 +9,9 @@
       "recommended": true,
       "correctness": {
         "useExhaustiveDependencies": "off"
+      },
+      "suspicious": {
+        "noExplicitAny": "off"
       }
     }
   },

@@ -9,28 +9,32 @@ import { type NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
 	try {
-		const data = await req.json();
-		// const { UserId, StartDate, EndDate } = data;
+		const { searchParams } = req.nextUrl;
+		const UserId = searchParams.get("did");
+		const StartDate = searchParams.get("startDate");
+		const EndDate = searchParams.get("endDate");
 
-		// if (!UserId || !StartDate || !EndDate) {
-		//   return NextResponse.json({ message: 'Missing required fields' }, { status: 400 });
-		// }
+		if (!UserId || !StartDate || !EndDate) {
+			return NextResponse.json({ message: "Missing required fields" }, { status: 400 });
+		}
 
 		const params: QueryCommandInput = {
 			TableName: "bluesky-followers",
-			// KeyConditionExpression: 'UserId = :userId AND MetricDate BETWEEN :start AND :end',
-			// ExpressionAttributeValues: {
-			//   ':userId': { S: UserId }, // Assuming UserId is a string
-			//   ':start': { S: StartDate.toISOString() }, // Assuming StartDate is a Date object
-			//   ':end': { S: EndDate.toISOString() }, // Assuming EndDate is a Date object
-			// },
+			KeyConditionExpression: "UserId = :userId AND MetricDate BETWEEN :start AND :end",
+			ExpressionAttributeValues: {
+				":userId": { S: UserId },
+				":start": { S: StartDate },
+				":end": { S: EndDate },
+			},
 		};
 
 		const command = new QueryCommand(params);
-
 		const result = await dynamoClient.send(command);
-		console.log(result);
-		dynamoClient.destroy();
+
+		if (!result.Items || result.Items.length === 0) {
+			return NextResponse.json({ message: "No data found" }, { status: 404 });
+		}
+
 		return NextResponse.json(result.Items, { status: 200 });
 	} catch (error) {
 		console.error(error);

@@ -1,5 +1,6 @@
 "use client";
 
+import { FollowersChart } from "@/components/followers-chart";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -11,6 +12,14 @@ import { LogOut, UserRoundMinus } from "lucide-react";
 import { redirect, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+interface FollowData {
+	userId: string;
+	metricDate: string;
+	followers: number;
+	following: number;
+	notFollowingBack: number;
+}
+
 export default function Component() {
 	const [user, setUser] = useState<ProfileViewDetailed>();
 	const router = useRouter();
@@ -19,6 +28,21 @@ export default function Component() {
 	const [cursor, setCursor] = useState<string>();
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [allFollowsCatched, setAllFollowsCatched] = useState<boolean>(false);
+	const [followChartData, setFollowChartData] = useState<FollowData[]>([]);
+
+	const mapApiResponseToFollowData = (apiResponse: any[]): FollowData[] => {
+		const followData = apiResponse.map((item) => ({
+			userId: item.UserId.S,
+			metricDate: item.MetricDate.S,
+			followers: Number.parseInt(item.Followers.N, 10),
+			following: Number.parseInt(item.Following.N, 10),
+			notFollowingBack: Number.parseInt(item.NotFollowingBack.N, 10),
+		}));
+
+		console.log(followData);
+
+		return followData;
+	};
 
 	const { toast } = useToast();
 
@@ -74,6 +98,24 @@ export default function Component() {
 					NotFollowingBack: notFollowingBack,
 				}),
 			});
+
+			const fetchFollowData = async () => {
+				try {
+					const response = await fetch(`/api/user-metrics?did=${did}&startDate=2024-01-01&endDate=2024-12-31`);
+					const data = await response.json();
+
+					if (response.ok) {
+						const followData = mapApiResponseToFollowData(data);
+						setFollowChartData(followData);
+					} else {
+						console.error("Error fetching data:", data.message);
+					}
+				} catch (error) {
+					console.error("Error fetching data:", error);
+				}
+			};
+
+			fetchFollowData();
 		} catch (error) {
 			console.error(error);
 		}
@@ -152,7 +194,7 @@ export default function Component() {
 			<div className="flex justify-end p-4">
 				<LogOut onClick={logOut} className="cursor-pointer" />
 			</div>
-			<div className="w-full container mx-auto bg-background rounded-lg shadow-lg overflow-hidden mt-6">
+			<div className="mb-16 w-full container mx-auto bg-background rounded-lg shadow-lg overflow-hidden mt-6">
 				<div className="p-8 space-y-6">
 					<div className="flex items-center gap-4">
 						<Avatar className="h-16 w-16">
@@ -174,6 +216,7 @@ export default function Component() {
 							<div className="text-muted-foreground">Following</div>
 						</div>
 					</div>
+					<FollowersChart chartData={followChartData} />
 					<div className="bg-muted rounded-lg p-4">
 						<h2 className="text-lg font-semibold mb-4">Don't follow you back</h2>
 						<ul className="space-y-6">
@@ -198,8 +241,9 @@ export default function Component() {
 												<div className="text-muted-foreground text-sm">@{follow?.handle}</div>
 											</div>
 										</div>
-										<Button variant="destructive" className="w-full sm:w-12" onClick={() => unfollow(follow)}>
-											<UserRoundMinus size={16} />
+										<Button variant="destructive" className="w-full sm:w-auto" onClick={() => unfollow(follow)}>
+											{/* <UserRoundMinus size={16} /> */}
+											Unfollow
 										</Button>
 									</li>
 								))}
@@ -211,6 +255,16 @@ export default function Component() {
 						)}
 					</div>
 				</div>
+			</div>
+			<div className="text-center mb-16">
+				Made with ❤️ by{" "}
+				<a href="https://lunaperegrina.dev/" target="_blank" rel="noopener noreferrer" className="underline">
+					Luna Peregrina
+				</a>{" "}
+				and{" "}
+				<a href="https://lugon.dev/" target="_blank" rel="noopener noreferrer" className="underline">
+					Pedro Lugon
+				</a>
 			</div>
 		</>
 	);
