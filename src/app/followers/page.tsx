@@ -58,6 +58,22 @@ export default function Component() {
 		try {
 			const { data } = await bskyAgent.getProfile({ actor: did });
 			setUser(data);
+
+			const notFollowingBack = (data.followsCount || 0) - (data.viewer?.knownFollowers?.count ?? 0);
+
+			await fetch("/api/user-metrics", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					UserId: did,
+					MetricDate: new Date().toISOString(),
+					Followers: data.followersCount,
+					Following: data.followsCount,
+					NotFollowingBack: notFollowingBack,
+				}),
+			});
 		} catch (error) {
 			console.error(error);
 		}
@@ -159,7 +175,7 @@ export default function Component() {
 						</div>
 					</div>
 					<div className="bg-muted rounded-lg p-4">
-						<h2 className="text-lg font-semibold mb-4">Don't follow you</h2>
+						<h2 className="text-lg font-semibold mb-4">Don't follow you back</h2>
 						<ul className="space-y-6">
 							{follows
 								?.filter((follow) => !follow?.viewer?.followedBy)
